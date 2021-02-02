@@ -8,12 +8,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class CfPropertyFileReader extends CfDefaultConfigurationReader {
+
+    private final Logger LOG = Logger.getLogger(getClass().getName());
 
     private Properties props = new Properties();
 
     public CfPropertyFileReader(String filePath) {
+        LOG.info(String.format("Reading properties from %s", filePath));
         try {
             InputStream input = new FileInputStream(filePath);
             this.props.load(input);
@@ -25,6 +29,6 @@ public class CfPropertyFileReader extends CfDefaultConfigurationReader {
 
     @Override
     public Optional<String> read(String name) {
-        return Optional.of(this.props.getProperty(name));
+        return Optional.ofNullable(this.props.getProperty(name));
     }
 }

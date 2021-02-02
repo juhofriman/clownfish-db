@@ -21,11 +21,24 @@ public abstract class CfDefaultConfigurationReader implements CfConfigurationRea
 
     @Override
     public final Integer readInteger(CfConfigurationKey key) {
+        String stringValue = this.readString(key);
         try {
-            return Integer.parseInt(this.readString(key));
+            return Integer.parseInt(stringValue);
         } catch (NumberFormatException exception) {
-            throw new CfInvalidConfigurationException(key, exception);
+            throw new CfInvalidConfigurationException(key, stringValue, "Expecting integer", exception);
         }
+    }
+
+    @Override
+    public final Boolean readBoolean(CfConfigurationKey key) {
+        String stringValue = this.readString(key);
+        if(stringValue.equals("true")) {
+            return true;
+        }
+        if(stringValue.equals("false")) {
+            return false;
+        }
+        throw new CfInvalidConfigurationException(key, stringValue, "Expecting boolean");
     }
 
     /**

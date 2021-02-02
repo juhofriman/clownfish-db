@@ -40,7 +40,7 @@ public class ClownfishServer implements Runnable {
                     this.connectionManager.getConnectionCount(),
                     Thread.activeCount()));
             try {
-                Thread.sleep(2000);
+                Thread.sleep(serverConfiguration.HEARTBEAT_INTERVAL_MS);
             } catch (InterruptedException e) {
                 LOG.info("Heartbeat interrupted, stopping thread");
                 break;
@@ -49,19 +49,24 @@ public class ClownfishServer implements Runnable {
     });
 
     public ClownfishServer(CfConfiguration serverConfiguration) {
-        this.addShutdownHooks();
-        this.startHeartbeat();
         this.serverConfiguration = serverConfiguration;
+        this.addShutdownHooks();
         try {
             this.socket = new ServerSocket(this.serverConfiguration.PORT);
             LOG.info(String.format("Started clownfish server to port={%s}", this.serverConfiguration.PORT));
         } catch (IOException exception) {
             throw new UnrecoverableCFException("Can't start clownfish", exception);
         }
+        this.startHeartbeat();
     }
 
     private void startHeartbeat() {
-        this.heartbeat.start();
+        if(serverConfiguration.HEARTBEAT_ENABLED) {
+            LOG.info(String.format("Starting heartbeat with interval=%s", serverConfiguration.HEARTBEAT_INTERVAL_MS));
+            this.heartbeat.start();
+        } else {
+            LOG.info("Heartbeat not enabled");
+        }
     }
 
     private void addShutdownHooks() {

@@ -21,6 +21,8 @@ class CfConfigurationTest {
 
         assertEquals(1234, config.PORT);
         assertEquals("127.0.0.1", config.BIND_ADDRESS);
+        assertTrue(config.HEARTBEAT_ENABLED);
+        assertEquals(5000, config.HEARTBEAT_INTERVAL_MS);
     }
 
     @Test
@@ -30,6 +32,19 @@ class CfConfigurationTest {
 
         assertEquals(9999, config.PORT);
         assertEquals("localhost", config.BIND_ADDRESS);
+        assertFalse(config.HEARTBEAT_ENABLED);
+        assertEquals(10, config.HEARTBEAT_INTERVAL_MS);
+    }
+
+    @Test
+    void testReadingAndFetchingPropertiesPartiallyFromFile() {
+        CfConfiguration config =
+                new CfConfiguration(new CfPropertyFileReader(resolveTestResourcePath("partial_cf_test.properties")));
+
+        assertEquals(1234, config.PORT);
+        assertEquals("127.0.0.1", config.BIND_ADDRESS);
+        assertTrue(config.HEARTBEAT_ENABLED);
+        assertEquals(10, config.HEARTBEAT_INTERVAL_MS);
     }
 
     private String resolveTestResourcePath(String cfgFile) {
