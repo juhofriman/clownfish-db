@@ -6,26 +6,30 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 public class ConnectionManager {
+
+    private final Logger LOG = Logger.getLogger(getClass().getName());
 
     private final LinkedList<Socket> clientSockets = new LinkedList<>();
 
     public void connect(Socket socket) {
+        LOG.info(String.format("Accepted connection from peer ip=%s", socket.getInetAddress()));
         this.clientSockets.add(socket);
         new Thread(() -> {
-            System.out.println("Starting thread");
+            LOG.info("Starting new thread");
             try {
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 while (true) {
                     String input = in.readLine();
                     if(input == null) {
-                        System.out.println("[" + Thread.currentThread().getName() + "] Input null");
+                        LOG.info("InputStream closed");
                         socket.close();
                         break;
                     } else {
-                        System.out.println("[" + Thread.currentThread().getName() + "] " +  input);
+                        LOG.info(String.format("Received message: %s", input));
                         out.println("Thanks for calling! You said: " + input);
                     }
                 }
@@ -34,7 +38,7 @@ public class ConnectionManager {
             }
             for (Socket clientSocket : this.clientSockets) {
                 if(clientSocket.isClosed()) {
-                    System.out.println("Harvesting dead client socket");
+                    LOG.info(String.format("Harvesting dead client socket ip=%s", socket.getInetAddress()));
                     this.clientSockets.remove(clientSocket);
                 }
             }
@@ -46,13 +50,13 @@ public class ConnectionManager {
         for (Socket clientSocket : clientSockets) {
             try {
                 if (clientSocket.isClosed()) {
-                    System.out.println("Closed client");
+                    LOG.warning("Client closed already");
                 } else {
+                    LOG.info("Sending shutdown message to client and closing socket");
                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                    out.println("Server shutdown...");
+                    out.println("Server shutdown initiated, kicking you out");
                     clientSocket.close();
                 }
-
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
