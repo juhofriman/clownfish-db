@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
 
 public class ConnectionManager {
@@ -14,10 +17,13 @@ public class ConnectionManager {
 
     private final LinkedList<Socket> clientSockets = new LinkedList<>();
 
+    private ExecutorService executor = Executors.newFixedThreadPool(5);
+
     public void connect(Socket socket) {
         LOG.info(String.format("Accepted connection from peer ip=%s", socket.getInetAddress()));
         this.clientSockets.add(socket);
-        new Thread(() -> {
+
+        executor.submit(new Thread(() -> {
             LOG.info("Starting new thread");
             try {
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -43,7 +49,7 @@ public class ConnectionManager {
                 }
             }
 
-        }).start();
+        }));
     }
 
     public void shutdown() {
