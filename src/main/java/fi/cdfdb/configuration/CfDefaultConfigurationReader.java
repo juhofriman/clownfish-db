@@ -47,5 +47,5 @@ public abstract class CfDefaultConfigurationReader implements CfConfigurationRea
      * @param name
      * @return
      */
-    public abstract Optional<String> read(String name);
+    protected abstract Optional<String> read(String name);
 }
