@@ -1,10 +1,12 @@
 package fi.cdfdb;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import fi.cdfdb.protocol.CfHandshake;
+import fi.cdfdb.protocol.CfMessage;
+
+import java.io.*;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,21 +28,24 @@ public class ConnectionManager {
         executor.submit(new Thread(() -> {
             LOG.info("Starting new thread");
             try {
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                DataInputStream in = new DataInputStream(socket.getInputStream());
+
                 while (true) {
-                    String input = in.readLine();
-                    if(input == null) {
-                        LOG.info("InputStream closed");
-                        socket.close();
-                        break;
-                    } else {
-                        LOG.info(String.format("Received message: %s", input));
-                        out.println("Thanks for calling! You said: " + input);
-                    }
+                    byte type = in.readByte();
+                    short length = in.readShort();
+                    LOG.info(String.format("Message of type=%s length=%s", type, length));
+                    byte[] payload = new byte[length];
+                    in.readFully(payload);
+                    LOG.info(String.format("Received message: %s", new String(payload, StandardCharsets.UTF_8)));
+                    out.write(new CfHandshake().serialize());
                 }
             } catch (IOException exception) {
-                exception.printStackTrace();
+                if(exception instanceof  EOFException) {
+                    LOG.info("Client hung up");
+                } else {
+                    exception.printStackTrace();
+                }
             }
             for (Socket clientSocket : this.clientSockets) {
                 if(clientSocket.isClosed()) {
