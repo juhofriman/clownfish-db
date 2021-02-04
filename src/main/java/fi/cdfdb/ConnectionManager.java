@@ -1,10 +1,13 @@
 package fi.cdfdb;
 
+import fi.cdfdb.protocol.CfError;
 import fi.cdfdb.protocol.CfHandshake;
 import fi.cdfdb.protocol.CfMessage;
+import fi.cdfdb.protocol.CfProtocolException;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
@@ -26,23 +29,36 @@ public class ConnectionManager {
         this.clientSockets.add(socket);
 
         executor.submit(new Thread(() -> {
-            LOG.info("Starting new thread");
+            LOG.info("Starting new dedicated thread for client");
             try {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
 
                 while (true) {
                     byte type = in.readByte();
+
+                    // Crap
+                    try {
+                        CfMessage.resolveMessageType(type);
+                    } catch (CfProtocolException e) {
+                        LOG.info("Client send unknown message");
+                        out.write(new CfError("Invalid byte").serialize());
+                        continue;
+                    }
+
                     short length = in.readShort();
-                    LOG.info(String.format("Message of type=%s length=%s", type, length));
+                    LOG.info(String.format("Incoming message of type=%s length=%s", type, length));
                     byte[] payload = new byte[length];
                     in.readFully(payload);
                     LOG.info(String.format("Received message: %s", new String(payload, StandardCharsets.UTF_8)));
+
                     out.write(new CfHandshake().serialize());
                 }
             } catch (IOException exception) {
                 if(exception instanceof  EOFException) {
                     LOG.info("Client hung up");
+                } else if(exception instanceof SocketException) {
+                    LOG.info("Client hung up (socket exception)");
                 } else {
                     exception.printStackTrace();
                 }

@@ -5,9 +5,32 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public abstract class CfMessage {
+
+    public enum MessageType {
+
+        CONNECTION((byte) 1),
+        META((byte) 2),
+        QUERY((byte) 3),
+        ERROR((byte) 4);
+
+        public final byte type;
+
+        MessageType(byte type) {
+            this.type = type;
+        }
+    }
+
+    public static MessageType resolveMessageType(byte receivedByte) throws CfProtocolException {
+        switch (receivedByte) {
+            case (byte) 1: return MessageType.CONNECTION;
+            case (byte) 2: return MessageType.META;
+            case (byte) 3: return MessageType.QUERY;
+            case (byte) 4: return MessageType.ERROR;
+            default: throw new CfProtocolException("Unknown message type byte " + receivedByte);
+        }
+    }
 
     public final String payload;
 

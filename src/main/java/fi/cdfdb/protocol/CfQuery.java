@@ -8,6 +8,6 @@ public class CfQuery extends CfMessage {
 
     @Override
     protected byte idByte() {
-        return 2;
+        return MessageType.QUERY.type;
     }
 }

@@ -2,7 +2,7 @@ package fi.cdfdb.protocol;
 
 public class CfHandshake extends CfMessage {
 
-    private final static String STATIC_PAYLOAD = "hellopingpong";
+    public final static String STATIC_PAYLOAD = "hellopingpong";
 
     public CfHandshake() {
         super(STATIC_PAYLOAD);
@@ -17,6 +17,6 @@ public class CfHandshake extends CfMessage {
 
     @Override
     protected byte idByte() {
-        return 1;
+        return MessageType.CONNECTION.type;
     }
 }
