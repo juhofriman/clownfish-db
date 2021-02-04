@@ -39,6 +39,7 @@ public class ClownfishServer implements Runnable {
             LOG.info(String.format("connections=%s activeThreads=%s",
                     this.connectionManager.getConnectionCount(),
                     Thread.activeCount()));
+            this.connectionManager.harvestDeadSockets();
             try {
                 Thread.sleep(serverConfiguration.HEARTBEAT_INTERVAL_MS);
             } catch (InterruptedException e) {

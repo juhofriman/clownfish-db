@@ -57,20 +57,32 @@ public class ConnectionManager {
             } catch (IOException exception) {
                 if(exception instanceof  EOFException) {
                     LOG.info("Client hung up");
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else if(exception instanceof SocketException) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     LOG.info("Client hung up (socket exception)");
                 } else {
                     exception.printStackTrace();
                 }
             }
-            for (Socket clientSocket : this.clientSockets) {
-                if(clientSocket.isClosed()) {
-                    LOG.info(String.format("Harvesting dead client socket ip=%s", socket.getInetAddress()));
-                    this.clientSockets.remove(clientSocket);
-                }
-            }
-
         }));
+    }
+
+    public void harvestDeadSockets() {
+        for (Socket clientSocket : this.clientSockets) {
+            if(clientSocket.isClosed()) {
+                LOG.info(String.format("Harvesting dead client socket ip=%s", clientSocket.getInetAddress()));
+                this.clientSockets.remove(clientSocket);
+            }
+        }
     }
 
     public void shutdown() {
