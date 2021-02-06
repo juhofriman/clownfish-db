@@ -1,6 +1,6 @@
 package fi.cdfdb.cli;
 
-import fi.cdfdb.protocol.CfHandshake;
+import fi.cdfdb.protocol.CfClientHandshake;
 import fi.cdfdb.protocol.CfQuery;
 
 import java.io.*;
@@ -22,14 +22,6 @@ public class ClownfishCli {
         clientSocket = new Socket("localhost", 1234);
         out = new DataOutputStream(clientSocket.getOutputStream());
         in = new DataInputStream(clientSocket.getInputStream());
-
-        out.write(new CfHandshake().serialize());
-        byte type = in.readByte();
-        short length = in.readShort();
-        System.out.println(String.format(" -- Message of type=%s length=%s", type, length));
-        byte[] payload = new byte[length];
-        in.readFully(payload);
-        System.out.println(String.format(" -- Received message: %s", new String(payload, StandardCharsets.UTF_8)));
     }
 
     private void run() {
@@ -42,6 +34,7 @@ public class ClownfishCli {
             };
 
             String quit = ":quit";
+            String manualHandshake = ":handshake";
             Function<String, String> expressionHandler = expression -> {
 
                 if (quit.equals(expression)) {
@@ -49,8 +42,11 @@ public class ClownfishCli {
                 }
 
                 try {
-                    out.write(new CfQuery(expression).serialize());
-
+                    if(manualHandshake.equals(expression)) {
+                        out.write(new CfClientHandshake().serialize());
+                    } else {
+                        out.write(new CfQuery(expression).serialize());
+                    }
                     byte type = in.readByte();
                     short length = in.readShort();
                     System.out.println(String.format(" -- Message of type=%s length=%s", type, length));

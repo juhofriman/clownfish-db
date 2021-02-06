@@ -1,5 +1,6 @@
 package fi.cdfdb.protocol;
 
+import fi.cdfdb.protocol.exception.CfProtocolException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
