@@ -27,7 +27,7 @@ class CfConfigurationTest implements TestConfigurationSupport {
     }
 
     @Test
-    void testReadingAdnFetchingPropertiesFromFile() {
+    void testReadingAndFetchingPropertiesFromFile() {
         CfConfiguration config =
                 new CfConfiguration(new CfPropertyFileReader(
                         resolveTestResourcePath("cf_test.properties")));
