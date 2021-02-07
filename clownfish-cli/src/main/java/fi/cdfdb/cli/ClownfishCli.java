@@ -6,6 +6,8 @@ import fi.cdfdb.protocol.CfQuery;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -13,6 +15,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ClownfishCli {
+
+    private final static String UNKNOWN_VERSION_TAG = "UNKNOWN";
+
+    public final String CLOWNFISH_VERSION = Optional.ofNullable(getClass().getPackage().getImplementationVersion())
+            .orElse(UNKNOWN_VERSION_TAG);
 
     private final Socket clientSocket;
     private final DataOutputStream out;
@@ -25,6 +32,10 @@ public class ClownfishCli {
     }
 
     private void run() {
+
+        System.out.println(MessageFormat.format("Clownfish CLI {0}", this.CLOWNFISH_VERSION));
+        System.out.println("Query SQL and all that");
+        System.out.println();
 
         try (Scanner scanner = new Scanner(System.in)) {
 
@@ -43,7 +54,7 @@ public class ClownfishCli {
 
                 try {
                     if(manualHandshake.equals(expression)) {
-                        out.write(new CfClientHandshake().serialize());
+                        out.write(CfClientHandshake.construct(this.CLOWNFISH_VERSION).serialize());
                     } else {
                         out.write(new CfQuery(expression).serialize());
                     }

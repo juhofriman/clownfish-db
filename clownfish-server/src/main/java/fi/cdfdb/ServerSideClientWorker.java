@@ -1,5 +1,6 @@
 package fi.cdfdb;
 
+import fi.cdfdb.configuration.CfConfiguration;
 import fi.cdfdb.protocol.CfError;
 import fi.cdfdb.protocol.CfClientHandshake;
 import fi.cdfdb.protocol.CfMessage;
@@ -18,16 +19,18 @@ public class ServerSideClientWorker implements Runnable {
 
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
-    private SocketCloseSignal close;
+    private final CfConfiguration serverConfiguration;
+    private final SocketCloseSignal close;
     private final DataInputStream in;
     private final DataOutputStream out;
     private final ServerSideProcessHandler serverSideProcessHandler;
 
-    public ServerSideClientWorker(SocketCloseSignal close, DataInputStream in, DataOutputStream out) {
+    public ServerSideClientWorker(CfConfiguration serverConfiguration, SocketCloseSignal close, DataInputStream in, DataOutputStream out) {
+        this.serverConfiguration = serverConfiguration;
         this.close = close;
         this.in = in;
         this.out = out;
-        this.serverSideProcessHandler = new ServerSideProcessHandler();
+        this.serverSideProcessHandler = new ServerSideProcessHandler(serverConfiguration);
     }
 
     @Override

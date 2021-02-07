@@ -8,8 +8,9 @@ class CfClientHandshakeTest {
 
     @Test
     void testHandshakeToBytesAndBack() {
-        CfClientHandshake cfClientHandshake = new CfClientHandshake();
+        CfClientHandshake cfClientHandshake = CfClientHandshake.construct("1.0.0");
         CfMessage received = CfMessage.read(cfClientHandshake.serialize());
         assertEquals(cfClientHandshake.payload, received.payload);
+        assertEquals("1.0.0", ((CfClientHandshake) received).getVersion());
     }
 }

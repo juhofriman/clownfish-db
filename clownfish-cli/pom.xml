@@ -38,6 +38,7 @@
                     <archive>
                         <manifest>
                             <mainClass>fi.cdfdb.cli.ClownfishCli</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
                 </configuration>

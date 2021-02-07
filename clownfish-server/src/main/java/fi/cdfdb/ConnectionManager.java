@@ -1,5 +1,7 @@
 package fi.cdfdb;
 
+import fi.cdfdb.configuration.CfConfiguration;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -15,6 +17,12 @@ public class ConnectionManager {
 
     private ExecutorService executor = Executors.newFixedThreadPool(5);
 
+    private final CfConfiguration serverConfiguration;
+
+    public ConnectionManager(CfConfiguration serverConfiguration) {
+        this.serverConfiguration = serverConfiguration;
+    }
+
     public synchronized void connect(Socket socket) {
 
         LOG.info(String.format("Accepted connection from peer ip=%s", socket.getInetAddress()));
@@ -22,6 +30,7 @@ public class ConnectionManager {
 
         try {
             executor.submit(new ServerSideClientWorker(
+                    this.serverConfiguration,
                     () -> {
                         try {
                             socket.close();

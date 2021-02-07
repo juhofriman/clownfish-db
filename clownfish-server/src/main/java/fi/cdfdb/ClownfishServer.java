@@ -25,13 +25,15 @@ public class ClownfishServer implements Runnable {
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
     /** Runtime configuration of the clownfish server */
+    // TODO needs to be final
     private CfConfiguration serverConfiguration;
 
     /** Server socket instance of Clownfish */
     private final ServerSocket socket;
 
     /** Connection manager for handling client sockets */
-    private final ConnectionManager connectionManager = new ConnectionManager();
+    // TODO needs to be final
+    private ConnectionManager connectionManager;
 
     private final Thread heartbeat = new Thread(() -> {
         Thread.currentThread().setName("Heartbeat");
@@ -49,12 +51,16 @@ public class ClownfishServer implements Runnable {
         }
     });
 
+
     public ClownfishServer(CfConfiguration serverConfiguration) {
         this.serverConfiguration = serverConfiguration;
+        this.connectionManager = new ConnectionManager(this.serverConfiguration);
         this.addShutdownHooks();
         try {
             this.socket = new ServerSocket(this.serverConfiguration.PORT);
-            LOG.info(String.format("Started clownfish server to port={%s}", this.serverConfiguration.PORT));
+            LOG.info(String.format("Started clownfish server [%s] to port={%s}",
+                    this.serverConfiguration.CLOWNFISH_VERSION,
+                    this.serverConfiguration.PORT));
         } catch (IOException exception) {
             throw new UnrecoverableCFException("Can't start clownfish", exception);
         }

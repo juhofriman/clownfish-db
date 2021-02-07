@@ -4,15 +4,12 @@ public class CfServerHandshake extends CfMessage {
 
     public final static String STATIC_PAYLOAD = "itsmedingdong";
 
-    public CfServerHandshake() {
-        super(STATIC_PAYLOAD);
+    public static CfServerHandshake construct(String version) {
+        return new CfServerHandshake(STATIC_PAYLOAD + version);
     }
 
-    public CfServerHandshake(String received) {
-        super(STATIC_PAYLOAD);
-        if(!received.equals(STATIC_PAYLOAD)) {
-            throw new RuntimeException("Got " + received);
-        }
+    public CfServerHandshake(String payload) {
+        super(payload);
     }
 
     @Override

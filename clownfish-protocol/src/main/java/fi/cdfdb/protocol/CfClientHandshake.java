@@ -4,19 +4,20 @@ public class CfClientHandshake extends CfMessage {
 
     public final static String STATIC_PAYLOAD = "hellopingpong";
 
-    public CfClientHandshake() {
-        super(STATIC_PAYLOAD);
+    public static CfClientHandshake construct(String version) {
+        return new CfClientHandshake(STATIC_PAYLOAD + version);
     }
 
-    public CfClientHandshake(String received) {
-        super(STATIC_PAYLOAD);
-        if(!received.equals(STATIC_PAYLOAD)) {
-            throw new RuntimeException("Got " + received);
-        }
+    public CfClientHandshake(String payload) {
+        super(payload);
     }
 
     @Override
     protected byte idByte() {
         return MessageType.CONNECTION.type;
+    }
+
+    public String getVersion() {
+        return payload.substring(STATIC_PAYLOAD.length());
     }
 }
