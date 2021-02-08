@@ -40,6 +40,19 @@ class CfConfigurationTest implements TestConfigurationSupport {
     }
 
     @Test
+    void assertThrowsForInvalidValue() {
+        assertThrows(CfInvalidConfigurationException.class, () -> new CfConfiguration(new CfDefaultConfigurationReader() {
+            @Override
+            public Optional<String> readString(String name) {
+                if(name.equals(CfConfigurationKey.THREADPOOL_TYPE.name)) {
+                    return Optional.of("this_is_not_thread_pool_value");
+                }
+                return Optional.empty();
+            }
+        }));
+    }
+
+    @Test
     void testReadingAndFetchingPropertiesPartiallyFromFile() {
         CfConfiguration config =
                 new CfConfiguration(new CfPropertyFileReader(

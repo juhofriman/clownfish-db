@@ -26,7 +26,12 @@ public class CfConfigurationKey<T> {
     public static CfConfigurationKey<String> THREADPOOL_TYPE = stringProperty(
                     "threadpool.type",
                     "fixed",
-                    Optional.ofNullable((value) -> value.equals("fixed") || value.equals("cached")));
+                    Optional.of((value) -> {
+                        if(value.equals("fixed") || value.equals("cached")) {
+                            return Optional.empty();
+                        }
+                        return Optional.of("Must be 'fixed' or 'cached'");
+                    }));
 
     private static CfConfigurationKey<Integer> integerProperty(
             String name,
@@ -56,14 +61,18 @@ public class CfConfigurationKey<T> {
     private CfConfigurationKey(ConfigurationMapper<T> mapper, String name, T defaultValue, Optional<ConfigurationValidator<T>> validator) {
         this.name = name;
         this.defaultValue = Optional.of(defaultValue);
-        this.validator = validator.orElse((value) -> true);
+        this.validator = validator.orElse((value) -> Optional.empty());
         this.mapper = mapper;
     }
 
     public T valueOf(String readValue) {
         T mappedValue = this.mapper.map(readValue);
-        if(!this.validator.validate(mappedValue)) {
-            throw new CfInvalidConfigurationException(this, readValue, "Invalid value for configuration key");
+        Optional<String> validationError = this.validator.validate(mappedValue);
+        if(validationError.isPresent()) {
+            throw new CfInvalidConfigurationException(
+                    this,
+                    readValue,
+                    validationError.get());
         }
         return mappedValue;
     }
