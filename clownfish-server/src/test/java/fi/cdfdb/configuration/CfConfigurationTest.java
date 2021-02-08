@@ -15,15 +15,16 @@ class CfConfigurationTest implements TestConfigurationSupport {
     void testReadingAndFetchingDefaultValues() {
         CfConfiguration config = new CfConfiguration(new CfDefaultConfigurationReader() {
             @Override
-            public Optional<String> read(String name) {
+            public Optional<String> readString(String name) {
                 return Optional.empty();
             }
         });
 
-        assertEquals(1234, config.PORT);
-        assertEquals("127.0.0.1", config.BIND_ADDRESS);
+        assertEquals(CfConfigurationKey.PORT.defaultValue.get(), config.PORT);
+        assertEquals(CfConfigurationKey.BIND_ADDRESS.defaultValue.get(), config.BIND_ADDRESS);
         assertTrue(config.HEARTBEAT_ENABLED);
-        assertEquals(5000, config.HEARTBEAT_INTERVAL_MS);
+        assertEquals(CfConfigurationKey.HEARTBEAT_INTERVAL_MS.defaultValue.get(), config.HEARTBEAT_INTERVAL_MS);
+        assertEquals(CfConfigurationKey.THREADPOOL_TYPE.defaultValue.get(), config.THREAD_POOL_TYPE);
     }
 
     @Test

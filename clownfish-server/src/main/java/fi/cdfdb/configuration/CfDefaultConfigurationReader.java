@@ -7,45 +7,14 @@ import java.util.Optional;
  */
 public abstract class CfDefaultConfigurationReader implements CfConfigurationReader {
 
-    @Override
-    public final String readString(CfConfigurationKey key) {
-        Optional<String> valueFromReader = this.read(key.name);
-        if(valueFromReader.isPresent()) {
-            return valueFromReader.get();
+    public <T> T read(CfConfigurationKey<T> key) {
+        Optional<String> valueFromConcreteReader = this.readString(key.name);
+        if(valueFromConcreteReader.isPresent()) {
+            return key.valueOf(valueFromConcreteReader.get());
         }
-        if(key.defaultValue.isPresent()) {
-            return key.defaultValue.get();
-        }
-        throw new CfMissingConfigurationException(key);
+        return key.defaultValue.orElseThrow(() -> new CfMissingConfigurationException(key));
     }
 
-    @Override
-    public final Integer readInteger(CfConfigurationKey key) {
-        String stringValue = this.readString(key);
-        try {
-            return Integer.parseInt(stringValue);
-        } catch (NumberFormatException exception) {
-            throw new CfInvalidConfigurationException(key, stringValue, "Expecting integer", exception);
-        }
-    }
+    public abstract Optional<String> readString(String name);
 
-    @Override
-    public final Boolean readBoolean(CfConfigurationKey key) {
-        String stringValue = this.readString(key);
-        if(stringValue.equals("true")) {
-            return true;
-        }
-        if(stringValue.equals("false")) {
-            return false;
-        }
-        throw new CfInvalidConfigurationException(key, stringValue, "Expecting boolean");
-    }
-
-    /**
-     * Reader must return prop for given name in String
-     *
-     * @param name
-     * @return
-     */
-    protected abstract Optional<String> read(String name);
 }

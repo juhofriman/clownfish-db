@@ -21,7 +21,7 @@ public class Clownfish {
         }
         return new CfDefaultConfigurationReader() {
             @Override
-            public Optional<String> read(String name) {
+            public Optional<String> readString(String name) {
                 return Optional.empty();
             }
         };

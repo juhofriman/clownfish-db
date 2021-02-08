@@ -14,18 +14,13 @@ public class CfConfiguration {
     public final Boolean HEARTBEAT_ENABLED;
     public final Integer HEARTBEAT_INTERVAL_MS;
 
-    public CfConfiguration(CfConfigurationReader reader) {
-        this.BIND_ADDRESS = reader.readString(CfConfigurationKey.BIND_ADDRESS);
-        this.PORT = reader.readInteger(CfConfigurationKey.PORT);
-        this.HEARTBEAT_ENABLED = reader.readBoolean(CfConfigurationKey.HEARTBEAT_ENABLED);
-        this.HEARTBEAT_INTERVAL_MS = reader.readInteger(CfConfigurationKey.HEARTBEAT_INTERVAL_MS);
-    }
+    public final String THREAD_POOL_TYPE;
 
-    private static String resolveVersion(Class clazz) {
-        Package packageInfo = clazz.getPackage();
-        if(packageInfo == null) {
-            return UNKNOWN_VERSION_TAG;
-        }
-        return Optional.ofNullable(packageInfo.getImplementationVersion()).orElse(UNKNOWN_VERSION_TAG) ;
+    public CfConfiguration(CfConfigurationReader reader) {
+        this.BIND_ADDRESS = reader.read(CfConfigurationKey.BIND_ADDRESS);
+        this.PORT = reader.read(CfConfigurationKey.PORT);
+        this.HEARTBEAT_ENABLED = reader.read(CfConfigurationKey.HEARTBEAT_ENABLED);
+        this.HEARTBEAT_INTERVAL_MS = reader.read(CfConfigurationKey.HEARTBEAT_INTERVAL_MS);
+        this.THREAD_POOL_TYPE = reader.read(CfConfigurationKey.THREADPOOL_TYPE);
     }
 }

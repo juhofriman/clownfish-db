@@ -13,22 +13,11 @@ class CfPropertyFileReaderTest implements TestConfigurationSupport {
         CfPropertyFileReader reader =
                 new CfPropertyFileReader(resolveTestResourcePath("cf_test.properties"));
 
-        assertEquals("9999", reader.readString(CfConfigurationKey.PORT));
-        assertEquals(9999, reader.readInteger(CfConfigurationKey.PORT));
-        assertEquals("localhost", reader.readString(CfConfigurationKey.BIND_ADDRESS));
-        assertEquals("false", reader.readString(CfConfigurationKey.HEARTBEAT_ENABLED));
-        assertFalse(reader.readBoolean(CfConfigurationKey.HEARTBEAT_ENABLED));
+        assertEquals("9999", reader.readString(CfConfigurationKey.PORT.name).get());
+        assertEquals("9999", reader.readString(CfConfigurationKey.PORT.name).get());
+        assertEquals("localhost", reader.readString(CfConfigurationKey.BIND_ADDRESS.name).get());
+        assertEquals("false", reader.readString(CfConfigurationKey.HEARTBEAT_ENABLED.name).get());
+        assertEquals("false", reader.readString(CfConfigurationKey.HEARTBEAT_ENABLED.name).get());
     }
 
-    @Test
-    void assertThrowsForInvalidValues() {
-        CfPropertyFileReader reader =
-                new CfPropertyFileReader(resolveTestResourcePath("cf_test.properties"));
-        Assertions.assertThrows(CfInvalidConfigurationException.class, () -> {
-            reader.readInteger(CfConfigurationKey.BIND_ADDRESS);
-        });
-        Assertions.assertThrows(CfInvalidConfigurationException.class, () -> {
-            reader.readBoolean(CfConfigurationKey.BIND_ADDRESS);
-        });
-    }
 }

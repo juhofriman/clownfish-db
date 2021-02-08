@@ -2,19 +2,69 @@ package fi.cdfdb.configuration;
 
 import java.util.Optional;
 
-public enum CfConfigurationKey {
+public class CfConfigurationKey<T> {
 
-    PORT("cf.port", "1234"),
-    BIND_ADDRESS("cf.bind_address", "127.0.0.1"),
+    public static CfConfigurationKey<Integer> PORT = integerProperty(
+            "cf.port",
+            1234,
+            Optional.empty());
 
-    HEARTBEAT_ENABLED("heartbeat.enabled", "true"),
-    HEARTBEAT_INTERVAL_MS("heartbeat.interval", "5000");
+    public static CfConfigurationKey<String> BIND_ADDRESS = stringProperty(
+            "cf.bind_address",
+            "127.0.0.1",
+            Optional.empty());
+
+    public static CfConfigurationKey<Boolean> HEARTBEAT_ENABLED = booleanProperty(
+            "heartbeat.enabled",
+            true);
+
+    public static CfConfigurationKey<Integer> HEARTBEAT_INTERVAL_MS  = integerProperty(
+            "heartbeat.interval",
+            5000,
+            Optional.empty());
+
+    public static CfConfigurationKey<String> THREADPOOL_TYPE = stringProperty(
+                    "threadpool.type",
+                    "fixed",
+                    Optional.ofNullable((value) -> value.equals("fixed") || value.equals("cached")));
+
+    private static CfConfigurationKey<Integer> integerProperty(
+            String name,
+            Integer defaultValue,
+            Optional<ConfigurationValidator<Integer>> validator) {
+        return new CfConfigurationKey(Integer::parseInt, name, defaultValue, validator);
+    }
+
+    private static CfConfigurationKey<String> stringProperty(
+            String name,
+            String defaultValue,
+            Optional<ConfigurationValidator<String>> validator) {
+        return new CfConfigurationKey((value) -> value, name, defaultValue, validator);
+    }
+
+    private static CfConfigurationKey<Boolean> booleanProperty(
+            String name,
+            Boolean defaultValue) {
+        return new CfConfigurationKey(Boolean::valueOf, name, defaultValue, Optional.empty());
+    }
 
     public final String name;
-    public final Optional<String> defaultValue;
+    public final Optional<T> defaultValue;
+    public final ConfigurationValidator validator;
+    public final ConfigurationMapper<T> mapper;
 
-    CfConfigurationKey(String name, String defaultValue) {
+    private CfConfigurationKey(ConfigurationMapper<T> mapper, String name, T defaultValue, Optional<ConfigurationValidator<T>> validator) {
         this.name = name;
         this.defaultValue = Optional.of(defaultValue);
+        this.validator = validator.orElse((value) -> true);
+        this.mapper = mapper;
+    }
+
+    public T valueOf(String readValue) {
+        T mappedValue = this.mapper.map(readValue);
+        if(!this.validator.validate(mappedValue)) {
+            throw new CfInvalidConfigurationException(this, readValue, "Invalid value for configuration key");
+        }
+        return mappedValue;
     }
 }

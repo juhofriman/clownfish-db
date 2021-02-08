@@ -28,7 +28,7 @@ public class CfPropertyFileReader extends CfDefaultConfigurationReader {
     }
 
     @Override
-    public Optional<String> read(String name) {
+    public Optional<String> readString(String name) {
         return Optional.ofNullable(this.props.getProperty(name));
     }
 }
