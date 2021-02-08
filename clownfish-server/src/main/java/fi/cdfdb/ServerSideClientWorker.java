@@ -1,8 +1,8 @@
 package fi.cdfdb;
 
 import fi.cdfdb.configuration.CfConfiguration;
-import fi.cdfdb.protocol.CfError;
 import fi.cdfdb.protocol.CfClientHandshake;
+import fi.cdfdb.protocol.CfError;
 import fi.cdfdb.protocol.CfMessage;
 import fi.cdfdb.protocol.CfQuery;
 import fi.cdfdb.protocol.exception.CfProtocolException;

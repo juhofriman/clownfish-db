@@ -16,6 +16,15 @@ public abstract class CfDefaultConfigurationReader implements CfConfigurationRea
         return key.defaultValue;
     }
 
+    /**
+     * Implementing class must be able to return value for configuration name.
+     *
+     * Return Optional.empty() if the key is not available in configuration and
+     * then the default value will be used.
+     *
+     * @param name of the resolved configuration key
+     * @return value for key or Optional.empty() if no value for key exists
+     */
     public abstract Optional<String> readString(String name);
 
 }

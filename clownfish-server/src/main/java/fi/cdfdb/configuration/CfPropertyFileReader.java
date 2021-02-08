@@ -3,7 +3,6 @@ package fi.cdfdb.configuration;
 import fi.cdfdb.exception.UnrecoverableCFException;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -14,7 +13,7 @@ public class CfPropertyFileReader extends CfDefaultConfigurationReader {
 
     private final Logger LOG = Logger.getLogger(getClass().getName());
 
-    private Properties props = new Properties();
+    private final Properties props = new Properties();
 
     public CfPropertyFileReader(String filePath) {
         LOG.info(String.format("Reading properties from %s", filePath));

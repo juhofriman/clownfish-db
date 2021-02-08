@@ -3,8 +3,6 @@ package fi.cdfdb.configuration;
 import fi.cdfdb.testutil.TestConfigurationSupport;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;

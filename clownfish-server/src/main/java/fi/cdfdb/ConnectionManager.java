@@ -2,11 +2,13 @@ package fi.cdfdb;
 
 import fi.cdfdb.configuration.CfConfiguration;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class ConnectionManager {
