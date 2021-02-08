@@ -20,11 +20,12 @@ class CfConfigurationTest implements TestConfigurationSupport {
             }
         });
 
-        assertEquals(CfConfigurationKey.PORT.defaultValue.get(), config.PORT);
-        assertEquals(CfConfigurationKey.BIND_ADDRESS.defaultValue.get(), config.BIND_ADDRESS);
+        assertEquals(CfConfigurationKey.PORT.defaultValue, config.PORT);
+        assertEquals(CfConfigurationKey.BIND_ADDRESS.defaultValue, config.BIND_ADDRESS);
         assertTrue(config.HEARTBEAT_ENABLED);
-        assertEquals(CfConfigurationKey.HEARTBEAT_INTERVAL_MS.defaultValue.get(), config.HEARTBEAT_INTERVAL_MS);
-        assertEquals(CfConfigurationKey.THREADPOOL_TYPE.defaultValue.get(), config.THREAD_POOL_TYPE);
+        assertEquals(CfConfigurationKey.HEARTBEAT_INTERVAL_MS.defaultValue, config.HEARTBEAT_INTERVAL_MS);
+        assertEquals(CfConfigurationKey.THREADPOOL_TYPE.defaultValue, config.THREAD_POOL_TYPE);
+        assertEquals(CfConfigurationKey.FIXED_THREADPOOL_SIZE.defaultValue, config.FIXED_THREAD_POOL_SIZE);
     }
 
     @Test

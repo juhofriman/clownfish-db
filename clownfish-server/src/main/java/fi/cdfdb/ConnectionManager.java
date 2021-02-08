@@ -15,12 +15,15 @@ public class ConnectionManager {
 
     private final LinkedList<Socket> clientSockets = new LinkedList<>();
 
-    private ExecutorService executor = Executors.newFixedThreadPool(5);
+    private final ExecutorService executor;
 
     private final CfConfiguration serverConfiguration;
 
     public ConnectionManager(CfConfiguration serverConfiguration) {
         this.serverConfiguration = serverConfiguration;
+        this.executor = ThreadPoolFactory.createThreadPool(
+                this.serverConfiguration.THREAD_POOL_TYPE,
+                this.serverConfiguration.FIXED_THREAD_POOL_SIZE);
     }
 
     public synchronized void connect(Socket socket) {

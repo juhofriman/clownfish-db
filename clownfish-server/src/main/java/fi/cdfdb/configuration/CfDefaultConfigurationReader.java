@@ -12,7 +12,8 @@ public abstract class CfDefaultConfigurationReader implements CfConfigurationRea
         if(valueFromConcreteReader.isPresent()) {
             return key.valueOf(valueFromConcreteReader.get());
         }
-        return key.defaultValue.orElseThrow(() -> new CfMissingConfigurationException(key));
+        // Each configuration entry has default value
+        return key.defaultValue;
     }
 
     public abstract Optional<String> readString(String name);
