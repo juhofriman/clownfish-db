@@ -1,6 +1,8 @@
 package fi.cdfdb.protocol;
 
-public class CfError extends CfMessage {
+import java.nio.charset.StandardCharsets;
+
+public class CfError extends CfMessage<String> {
 
     public enum ERROR_CODE {
         UNKNOWN_START_BYTE("CFERR-1", "Received unknown starting byte"),
@@ -17,6 +19,16 @@ public class CfError extends CfMessage {
 
     public CfError(ERROR_CODE error) {
         super(error.code + ": " + error.defaultMessage);
+    }
+
+    @Override
+    protected String deserialize(byte[] bytes) {
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    @Override
+    protected byte[] serialize(String payload) {
+        return payload.getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

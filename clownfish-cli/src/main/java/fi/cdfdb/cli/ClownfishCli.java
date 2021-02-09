@@ -54,7 +54,7 @@ public class ClownfishCli {
 
                 try {
                     if(manualHandshake.equals(expression)) {
-                        out.write(CfClientHandshake.construct(this.CLOWNFISH_VERSION).serialize());
+                        out.write(new CfClientHandshake(this.CLOWNFISH_VERSION).serialize());
                     } else {
                         out.write(new CfQuery(expression).serialize());
                     }

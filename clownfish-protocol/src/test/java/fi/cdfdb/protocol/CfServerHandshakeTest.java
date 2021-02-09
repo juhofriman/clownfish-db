@@ -2,16 +2,14 @@ package fi.cdfdb.protocol;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class CfClientHandshakeTest extends SerializationTestSupport {
+class CfServerHandshakeTest extends SerializationTestSupport {
 
     @Test
     void testHandshakeToBytesAndBack() {
-        CfClientHandshake cfClientHandshake = new CfClientHandshake("0.0.1");
+        CfServerHandshake cfClientHandshake = new CfServerHandshake("0.0.1");
         assertEquals(CfMessage.MessageType.CONNECTION.type, cfClientHandshake.idByte());
         byte[] bytesInWire = cfClientHandshake.serialize();
 
@@ -20,7 +18,7 @@ class CfClientHandshakeTest extends SerializationTestSupport {
 
         assertEquals(CfMessage.MessageType.CONNECTION.type, type);
         assertEquals(cfClientHandshake.getPayloadData().length(), length); // This is just known...
-        CfClientHandshake deserialized = new CfClientHandshake(
+        CfServerHandshake deserialized = new CfServerHandshake(
                 allocatePayload(bytesInWire, length));
 
         assertEquals(cfClientHandshake.getPayloadData(), deserialized.getPayloadData());
@@ -29,6 +27,6 @@ class CfClientHandshakeTest extends SerializationTestSupport {
     @Test
     void assertCatchesInvalidBytes() {
         BogusStringMessage bogusStringMessage = new BogusStringMessage("this-is-not-valid");
-        assertThrows(RuntimeException.class, () -> new CfClientHandshake(allocatePayload(bogusStringMessage.serialize(), (short) 5)));
+        assertThrows(RuntimeException.class, () -> new CfServerHandshake(allocatePayload(bogusStringMessage.serialize(), (short) 5)));
     }
 }

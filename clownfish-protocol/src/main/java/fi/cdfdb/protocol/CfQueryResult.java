@@ -1,8 +1,16 @@
 package fi.cdfdb.protocol;
 
-public class CfQueryResult extends CfMessage {
+import fi.cdfdb.relation.Relation;
+
+import java.nio.charset.StandardCharsets;
+
+public class CfQueryResult extends CfMessage<String> {
 
     public final static String STATIC_PAYLOAD = "thisisqueryresultkinds";
+
+    public static CfQueryResult construct(Relation relation) {
+        return null;
+    }
 
     public CfQueryResult() {
         super(STATIC_PAYLOAD);
@@ -16,7 +24,17 @@ public class CfQueryResult extends CfMessage {
     }
 
     @Override
+    protected String deserialize(byte[] bytes) {
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    @Override
+    protected byte[] serialize(String payload) {
+        return payload.getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Override
     protected byte idByte() {
-        return MessageType.CONNECTION.type;
+        return MessageType.RELATION.type;
     }
 }

@@ -44,7 +44,7 @@ public class ServerSideClientWorker implements Runnable {
                     out.write(this.serverSideProcessHandler.handle(cfMessage).serialize());
                 } catch (CfProtocolException protocolException) {
                     CfError cfError = protocolException.errorToWire();
-                    LOG.warning("Protocol exception: " + cfError.payload);
+//                    LOG.warning("Protocol exception: " + cfError.payload);
                     out.write(cfError.serialize());
                     continue;
                 }
